@@ -193,18 +193,18 @@ molecule_1=Molecule('ABAKAR')
 molecule_2=Molecule('gauss_compare') ## only 2 conformers
 molecule_3=Molecule('origin_molecule')
 
-
+mol2_df=get_molecule_string(molecule_2.obmol)
 
 
 #creates conformers and turns each one to a 3d model
 x=confab_search(molecule_3.obmol)
 # mol_string_list_to_3d('xyz',x)
 
-# ob_conformers=Conformers(x)
-# crest_conformers_list=split_molecule_file('crest_conformers.xyz')[0:5]
-# crest_conformers=Conformers(crest_conformers_list)
+ob_conformers=Conformers(x[0:5])
+crest_conformers_list=split_molecule_file('crest_conformers.xyz')[0:5]
+crest_conformers=Conformers(crest_conformers_list)
 
-# RMSD_between_mol2_lists(crest_conformers.mol2_df_list,ob_conformers.mol2_df_list)
+RMSD_between_mol2_lists(crest_conformers.mol2_df_list,ob_conformers.mol2_df_list)
 
 # mol = create_3d_from_smiles(('O=S(=O)(c3ccc(n1nc(cc1c2ccc(cc2)C)C(F)(F)F)cc3)N'),'3d.pdb')
 # mol_1=create_3d_from_xyz('conf_pyt.xyz','1.pdb')
