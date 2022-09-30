@@ -1,0 +1,1 @@
+/gpfs0/gaus/users/edenspec/working_obabel/build/bin/obabel coor.xyz -O conf.xyz --conformer --ncof 30 --writeconformers
