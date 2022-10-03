@@ -1,5 +1,5 @@
 from openbabel import pybel
-import openbabel as ob
+from openbabel import openbabel as ob
 import help_functions
 import os
 import numpy as np
@@ -51,9 +51,21 @@ def create_3d_from_file(file_name):
     obmol = obmol_from_coordinates(file_type,file_name)
     return molecule_to_3d(obmol,help_functions.change_filetype(file_name,'pdb'))
 
-def confab_search(obmol,output_format='xyz'):
+def freeze_atoms_for_confab(obmol,atoms_to_freeze):
+    atom_indexes=np.array(atoms_to_freeze)-1
+    constraints = ob.OBFFConstraints()
+    for atom in ob.OBMolAtomIter(obmol):
+        atom_id = atom.GetIndex() 
+        if atom_id in atoms_to_freeze:
+            constraints.AddAtomConstraint(atom_id)
+    return constraints
+
+def confab_search(obmol,set_constraints=False,atoms_to_freeze=None,output_format='xyz'):
     pff = ob.OBForceField_FindType( "mmff94" )
-    pff.DiverseConfGen(0.5, 10000, 50.0, True) #allow change
+    if set_constraints :
+        constraints=freeze_atoms_for_confab(obmol,atoms_to_freeze)
+        pff.SetConstraints(constraints)
+    pff.DiverseConfGen(0.5, 1000, 50.0, True) #allow change
     pff.Setup(obmol)
     pff.GetConformers(obmol)
     obconversion = ob.OBConversion()
@@ -66,7 +78,7 @@ def confab_search(obmol,output_format='xyz'):
 
 def calc_energy(obmol):
     pff = ob.OBForceField_FindType( "mmff94" )
-    pff.SetLogLevel(ob.OBFF_LOGLVL_HIGH)
+    # pff.SetLogLevel(ob.OBFF_LOGLVL_HIGH)
     pff.SetLogToStdErr()
     pff.Setup(obmol)
     return pff.Energy()
@@ -137,14 +149,18 @@ def mol_string_list_to_3d(mol_format,mol_string_list):
 def RMSD_between_mol2_dfs(mol2_df_1,mol2_df_2):
     r_heavy = PandasMol2.rmsd(mol2_df_1, mol2_df_2)
     r_all  = PandasMol2.rmsd(mol2_df_1, mol2_df_2, heavy_only=False)
-    print('Heavy-atom RMSD: %.4f Angstrom' % r_heavy)
+    print('Heavy-atom RMSD: {.4f} Angstrom' .format(r_heavy))
     print('All-atom RMSD: %.4f Angstrom' % r_all)
 
 def RMSD_between_mol2_lists(mol2_list_1,mol2_list_2):
     for mol1 in mol2_list_1:
         for mol2 in mol2_list_2:
             RMSD_between_mol2_dfs(mol1,mol2)
-    
+
+def RMSD_between_obmol(obmol_1,obmol_2):
+    obalign=ob.OBAlign(obmol_1,obmol_2)
+    obalign.Align()
+    return obalign.GetRMSD()
     
 class Conformers():
     
@@ -153,9 +169,10 @@ class Conformers():
         self.comformer_list=conformer_list
         self.molecule_format=molecule_format
         self.pbmol_list=[pybel.readstring(molecule_format, molecule_string) for molecule_string in conformer_list]
+        self.obmol_list=[pbmol.OBMol for pbmol in self.pbmol_list]
         self.mol2_df_list=[obmol_to_mol2_df(pbmol) for pbmol in self.pbmol_list]
         # mol_string_list_to_3d(self.molecule_format,self.comformer_list)
-        # self.conformer_energy_list=[calc_energy(obmol) for obmol in self.pbmol_list]
+        # self.conformer_energy_list=[calc_energy(obmol) for obmol in self.obmol_list]
         
 class Molecule():
     """
@@ -204,7 +221,7 @@ ob_conformers=Conformers(x[0:5])
 crest_conformers_list=split_molecule_file('crest_conformers.xyz')[0:5]
 crest_conformers=Conformers(crest_conformers_list)
 
-RMSD_between_mol2_lists(crest_conformers.mol2_df_list,ob_conformers.mol2_df_list)
+# RMSD_between_mol2_lists(crest_conformers.mol2_df_list,ob_conformers.mol2_df_list)
 
 # mol = create_3d_from_smiles(('O=S(=O)(c3ccc(n1nc(cc1c2ccc(cc2)C)C(F)(F)F)cc3)N'),'3d.pdb')
 # mol_1=create_3d_from_xyz('conf_pyt.xyz','1.pdb')
