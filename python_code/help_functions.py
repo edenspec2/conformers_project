@@ -149,7 +149,15 @@ def create_molecule_directories():
     for dir_name in list_of_dirs:
         os.mkdir(dir_name)
     return
-
+def delete_type_files(file_type='xyz'): ## my help function to delete xyz files
+    """
+    a function that gets a directory path and file type, and deletes all the files of said type.
+    """
+    list_of_molecules=[file for file in os.listdir() if file.endswith(file_type)]
+    for molecule in list_of_molecules:
+        os.remove(os.path.abspath(molecule))
+        
+        
 def move_files_directory(file_type):#need edit
     """
     a function that moves xyz type files from one directory to another.

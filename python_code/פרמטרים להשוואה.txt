@@ -1,7 +1,13 @@
 מספר קונפומרים
 מטענים
 אנרגיית קונפורמר הטוב ביותר
-סטרימול
+סטרימול?
 מהירות הרצה
 best/worst energy
 best/worst RMSD
+
+כלים להשוואה
+crest
+balloon
+openbabel
+https://cxtoolshed.rbvi.ucsf.edu/apps/seqcrow-crest using cimerax ?

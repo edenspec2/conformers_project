@@ -1,0 +1,8 @@
+anaconda3 installer
+
+python 3.7.0
+
+conda install -c conda-forge openbabel
+conda install -y -c rdkit rdkit==2020.03.2.0
+conda install -c conda-forge eigen
+conda install -c bioconda pybel

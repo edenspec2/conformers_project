@@ -8,9 +8,19 @@ import sys
 print(sys.executable)
 print(sys.path)
 import numpy as np
+import openbabel as ob
 
-# from rdkit import Chem
+
+
+from rdkit import Chem
 from rdkit.Chem import AllChem
+
+def create_3d_from_smiles(smiles_code): #'O=S(=O)(c3ccc(n1nc(cc1c2ccc(cc2)C)C(F)(F)F)cc3)N'
+    obmol = ob.OBMol()
+    conv = ob.OBConversion()
+    conv.SetInFormat('smi')
+    conv.ReadString(obmol, smiles_code)
+    return obmol
 
 def GenerateConformers(mol, nConfs):
     # Add H atoms to skeleton
@@ -85,9 +95,15 @@ def CalcNConf20(energylist, upper=20):
 
 if __name__ == "__main__":
     # Assume we're reading a bunch of SMILES from the stdin
-    for line in fileinput.input():
-        smiles = line.split()[0]
-        molecule = Chem.MolFromSmiles(smiles)
-        # maximum of 50 conformers was the limit in the paper
-        energyList = GenerateConformers(molecule, 50)
-        print(CalcNConf20(energyList))
+    smiles = ('O=S(=O)(c3ccc(n1nc(cc1c2ccc(cc2)C)C(F)(F)F)cc3)N')
+    molecule = Chem.MolFromSmiles(smiles)
+    energyList = GenerateConformers(molecule, 50)
+    print(CalcNConf20(energyList))
+    
+    
+    # for line in fileinput.input():
+    #     smiles = line.split()[0]
+    #     molecule = Chem.MolFromSmiles(smiles)
+    #     # maximum of 50 conformers was the limit in the paper
+    #     energyList = GenerateConformers(molecule, 50)
+    #     print(CalcNConf20(energyList))
