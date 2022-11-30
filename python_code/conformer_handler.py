@@ -23,8 +23,8 @@ molecule.pbmol.formula
 Out[7]: 'C132H112N12P4S4'
 
   """
-path_to_add=r'C:\Users\edens\Documents\GitHub\conformers_project\python_code\molecules'
-os.chdir(path_to_add)
+# path_to_add=r'C:\Users\edens\Documents\GitHub\conformers_project\python_code\molecules'
+# os.chdir(path_to_add)
 
  
 class GeneralConstants(Enum):
@@ -532,12 +532,12 @@ if __name__ == '__main__':
     # help_functions.create_molecule_directories()
     # help_functions.move_files_directory('.xyz')
     
-    os.chdir(r'C:\Users\edens\Documents\GitHub\conformers_project\python_code\molecules\crest_conformers')
-    # balloon_conformers_list=split_molecule_file('balloon_coor_conformers.xyz')
-    # balloon_conformers=Conformers(balloon_conformers_list)
-    rdkit_conformers=Conformers('rdkitconformers_origin_molecule.sdf','sdf')
-    # ob_conformers=Conformers('obconformers_origin_molecule.sdf','sdf')
-    crest_conformers=Conformers('crest_conformers.xyz')
+    # os.chdir(r'C:\Users\edens\Documents\GitHub\conformers_project\python_code\molecules\crest_conformers')
+    # # balloon_conformers_list=split_molecule_file('balloon_coor_conformers.xyz')
+    # # balloon_conformers=Conformers(balloon_conformers_list)
+    # rdkit_conformers=Conformers('rdkitconformers_origin_molecule.sdf','sdf')
+    # # ob_conformers=Conformers('obconformers_origin_molecule.sdf','sdf')
+    # crest_conformers=Conformers('crest_conformers.xyz')
     # conformers_list=[rdkit_conformers, ob_conformers, crest_conformers]
 #     data=tab_data.TabDataAnalyzer(parser=tab_data.set_tab_parser(),origin_df=crest_conformers.coordinates_df_list[1],xyz_filename='conformer',get_plot=True)
 #     # overlay_analyzer=tab_data.OverlayAnalyzer(parser=tab_data.set_overlay_parser(),xyz_filenames=['0','1'] ,xyz_dfs=[crest_conformers.coordinates_df_list[0], crest_conformers.coordinates_df_list[1],crest_conformers.coordinates_df_list[2]], fit_mode='all',)
