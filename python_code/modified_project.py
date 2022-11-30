@@ -81,6 +81,17 @@ class GeneralConstants(Enum):
         'C.3':'C', 'N.4':'N',
         'C.ar':'C6/N6', 'S.2':'S',
         }
+    REGULAR_BOND_TYPE={
+        
+        'O.2':'O', 'N.2':'N','S.3':'S',
+        'O.3':'O', 'N.1':'N', 'S.O2':'S',
+        'O.co2':'O', 'N.3':'N','P.3':'P',
+        'C.1':'C', 'N.ar':'N',
+        'C.2':'C', 'N.am':'N',
+        "C.cat":'C', 'N.pl3':'N',
+        'C.3':'C', 'N.4':'N',
+        'C.ar':'C', 'S.2':'S',
+        }
     
     ATOMIC_NUMBERS ={
     '1':'H', '5':'B', '6':'C', '7':'N', '8':'O', '9':'F', '14':'Si',
@@ -604,7 +615,7 @@ def get_tc_for_sterimol(degree,plane):
 def get_specific_bonded_atoms_df(bonds_df,atom_filter,coordinates_df):
     edited_bonds_df=bonds_df[(bonds_df.isin(atom_filter))].dropna().reset_index(drop=True)
     bonds_array=(np.array(edited_bonds_df)-1).astype(int)
-    atom_bonds=np.vstack([(coordinates_df.iloc[bond]['atom'].values) for bond in bonds_array]).reshape(-1,2)
+    atom_bonds=np.vstack([(coordinates_df.iloc[bond]['element'].values) for bond in bonds_array]).reshape(-1,2)
     bonded_atoms_df=(pd.concat([pd.DataFrame(atom_bonds),edited_bonds_df],axis=1))
     bonded_atoms_df.columns=[['atom_1','atom_2','index_1','index_2']]
     return bonded_atoms_df
@@ -614,8 +625,9 @@ def remove_atom_bonds(atom_bonds_df,atom_remove='H'):
     atom_bonds_df.drop(delete_rows,axis=0,inplace=True)
     return atom_bonds_df
 
+
 def remove_nof_bonds(bonded_atoms_df,bonds_array,coordinates_df):
-    nof_indexes=[row[0] for row in bonded_atoms_df.iterrows() if (row[1][1]=='H') & (row[1][0] in ('N','O','F'))]
+    nof_indexes=[row[0] for row in bonded_atoms_df.iterrows() if (row[1][1]=='H') & (row[1][0] in ('N.1','N.2','N.3','N.4','N.am','N.ar','N.pl3','O.2','O.3','F'))]
     for index in nof_indexes:
         pair=bonds_array[index]
         coordinates=coordinates_df[['x','y','z']].astype(float)

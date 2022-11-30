@@ -28,14 +28,15 @@ from cycler import cycler                                       #generate color 
 import io                                                       #IO for (easy) saving multi xyz
 from enum import Enum
 
-path_to_add=r'C:\Users\edens\Documents\GitHub'
+path_to_add=r'C:\Users\edens\Documents\GitHub\Crystal_structure'
 os.chdir(path_to_add)
 sys.path.insert(0, path_to_add)
 
-from Crystal_structure.tools.general_constants import *
-from Crystal_structure.tools.file_handlers import *
-from Crystal_structure.tools.rmsd_wrappers import *
-
+from tools.general_constants import *
+from tools.file_handlers import *
+from tools.rmsd_wrappers import *
+import pybel
+import openbabel as ob
 ############
 #Constansts#
 ############
@@ -760,12 +761,9 @@ def get_xyz_df_from_file(xyz_filename):
     """
     Write Me
     """
-    xyz_df=pd.read_csv(xyz_filename,
-                       delim_whitespace=True,
-                       skiprows=2,
-                       names=["element", "x", "y", "z"],
-                       error_bad_lines='skip')
-    return xyz_df
+    df=load_single_xyz_file(xyz_filename)
+    return df
+    
 
 def expend_xyz_df(xyz_df, index_atoms=0):
     """
@@ -1057,7 +1055,7 @@ def get_aligned_molecule_connections(bond_pairs_1, bond_pairs_2):
 
 #Analyzers
 class OverlayAnalyzer():
-    def __init__(self, parser, xyz_filenames, fit_mode='all', atoms=['1', '2']):
+    def __init__(self, parser, xyz_dfs, fit_mode='all', atoms=['1', '2']):
         """
         fkf
         """
@@ -1072,10 +1070,11 @@ class OverlayAnalyzer():
     def get_inital_data(self):
         try:
             self.head_list=[get_xyz_headers(xyz_filename) for xyz_filename in self.args.filename]
-            self.xyz_df_list=[get_xyz_df_from_file(xyz_filename) for xyz_filename in self.args.filename]
+            self.xyz_df_list=xyz_dfs
+            
             #index starts at 1, first atom is atom 1
             for xyz_df in self.xyz_df_list:
-                xyz_df.index +=1
+                xyz_df.index+=1
         except IOError: #file not found
             print(f"File(s) not found. Exit.")
             sys.exit(1)
@@ -1173,7 +1172,9 @@ class OverlayAnalyzer():
         #show the plot
         plt.show()
         plt.clf()
-
+        plot_filename=self.args.filename[0].split('.')[0]+'_'+self.args.filename[1].split('.')[0]+'.png'
+        plt.savefig(plot_filename)
+        
     def save_altered_xyz(self):
         try:
             for file_index, filename in enumerate(self.args.filename):
@@ -1463,21 +1464,25 @@ class TabDataAnalyzer():
         return data.__dict__, self.plot_filename
 
 if __name__=='__main__':
-    import os
-    home_path=r'C:\Users\edens\Documents\GitHub'
-##        os.chdir(home_path)
-    sys.path.insert(1, path_to_add)
-##        xyz_filename_1='crest_conformers.xyz'
-    xyz_filename_1='coor.xyz'
-    # molecule_tab_1=TabDataAnalyzer(set_tab_parser(), xyz_filename_1, get_plot=True)
-    data_dict, plot_filename=molecule_tab_1.get_tab_data()
-##        print(plot_filename)
-    xyz_filename_2='best_crest.xyz'
-##        molecule_tab_2=TabDataAnalyzer(set_tab_parser(), xyz_filename_2, get_plot=True) #bonds_by_ref=True, bonds_ref=data_dict.get('Bonds_boolean_mask')
-##        data_dict, plot_filename=molecule_tab_2.get_tab_data()
+    pass
+#     import os
+#     home_path=r'C:\Users\edens\Documents\GitHub'
+#     path_to_add=r'C:\Users\edens\Documents\GitHub\conformers_project\python_code\molecules\crest_conformers'
+#     os.chdir(path_to_add)
+# ##        os.chdir(home_path)
+#     sys.path.insert(1, path_to_add)
+# ##        xyz_filename_1='crest_conformers.xyz'
+#     xyz_filename_1='crest_conformers_0.xyz'
+#     # molecule_tab_1=TabDataAnalyzer(set_tab_parser(), xyz_filename_1, get_plot=True)
+#     # data_dict, plot_filename=molecule_tab_1.get_tab_data()
+# ##        print(plot_filename)
+    
+#     xyz_filename_2='crest_conformers_1.xyz'
+# ##        molecule_tab_2=TabDataAnalyzer(set_tab_parser(), xyz_filename_2, get_plot=True) #bonds_by_ref=True, bonds_ref=data_dict.get('Bonds_boolean_mask')
+# ##        data_dict, plot_filename=molecule_tab_2.get_tab_data()
 
-    overlay_analyzer=OverlayAnalyzer(parser=set_overlay_parser(), xyz_filenames=[xyz_filename_1, xyz_filename_2], fit_mode='all',
-##                                         atoms=['30', '20', '16', '0', '24', '8', '5', '33'],
-                                     ) #'all'
+#     overlay_analyzer=OverlayAnalyzer(parser=set_overlay_parser(), xyz_filenames=[xyz_filename_1, xyz_filename_2], fit_mode='all',
+# ##                                         atoms=['30', '20', '16', '0', '24', '8', '5', '33'],
+#                                      ) #'all'
 
         

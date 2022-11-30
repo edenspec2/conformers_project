@@ -144,6 +144,13 @@ def change_filetype (filename,new_type='xyz'):
         new_filename=split_result[0]+'.'+new_type
     return new_filename
 
+def xyz_string_to_df(lines):
+
+    strip_lines=[line.strip().rstrip('\n') for line in lines]
+    
+    
+    
+    
 def create_molecule_directories():
     list_of_dirs=[name.split('.')[0] for name in os.listdir()]
     for dir_name in list_of_dirs:

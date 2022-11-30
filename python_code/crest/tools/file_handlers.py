@@ -310,10 +310,11 @@ def load_single_xyz_file(xyz_filename):
         [[0.00000, 0.00000, 0.11779], [0.00000, 0.75545, -0.47116], [0.00000, -0.75545, -0.47116]]
     """
     xyz_file=np.genfromtxt(fname=xyz_filename, skip_header=2, dtype='unicode')
-    symbols=xyz_file[:,0]
+    symbols=pd.DataFrame(xyz_file[:,0] ,columns=["element"])
     coordinates=(xyz_file[:,1:])
-    coordinates=coordinates.astype(float)
-    return symbols, coordinates    
+    coordinates=pd.DataFrame(coordinates.astype(float),columns=["x", "y", "z"])
+    df=pd.concat([symbols,coordinates],axis=1).reset_index(drop=True)
+    return df
 
 def get_xyz_df_from_file(xyz_filename):
     """
