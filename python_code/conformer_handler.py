@@ -528,7 +528,8 @@ class Conformers():
         
         os.chdir('../')
      
-if __name__ == '__main__':        
+if __name__ == '__main__':
+    pass        
     # help_functions.create_molecule_directories()
     # help_functions.move_files_directory('.xyz')
     
