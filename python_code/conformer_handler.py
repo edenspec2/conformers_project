@@ -364,11 +364,11 @@ def get_sterimol(coordinates_df,bonds_df,atype,base_atoms,radii='bondi'):
     df=pd.DataFrame([B1,B5,L],index=['B1','B5','L']) 
     return df.T
   
-"""
+# """
 
-"""
-from pyscf import gto, scf
-mol = gto.M(atom="ethene.xyz")
+# """
+# from pyscf import gto, scf
+# mol = gto.M(atom="ethene.xyz")
 
 # class ConformerCompare():
     
@@ -405,8 +405,8 @@ class Conformers():
         self.conformers_dict=self.array_list_to_dict()
         self.dipole_list=pd.concat([calc_dipole_charges(coordinates,charges) for coordinates,charges in zip(self.coordinates_array_list,self.charges_list)]).reset_index(drop=True)
         self.sterimol_list=pd.concat([get_sterimol(coordinates_df,bonds_df,atype,[2,1]) for coordinates_df,bonds_df,atype in zip(self.coordinates_df_list, self.conformers_bonds_df_list,self.atype_list)]).reset_index(drop=True)
-        self.conformers_energy_list=pd.DataFrame([calc_energy(obmol) for obmol in self.obmol_list],columns=['energy'])
-        self.extended_conformers=pd.concat([pd.DataFrame(self.conformers_list,columns=['conformer']),self.conformers_energy_list,self.dipole_list,self.sterimol_list],axis=1)
+       # self.conformers_energy_list=pd.DataFrame([calc_energy(obmol) for obmol in self.obmol_list],columns=['energy'])
+        self.extended_conformers=pd.concat([pd.DataFrame(self.conformers_list,columns=['conformer']),self.dipole_list,self.sterimol_list],axis=1) #,self.conformers_energy_list
         
     def write_all_conformers(self):
         for index,conformer in enumerate(self.conformers_list):
@@ -451,7 +451,7 @@ class Conformers():
         os.chdir('../')
      
 if __name__ == '__main__':
-    pass        
+            
     # help_functions.create_molecule_directories()
     # help_functions.move_files_directory('.xyz')
     
@@ -460,7 +460,7 @@ if __name__ == '__main__':
     # # balloon_conformers=Conformers(balloon_conformers_list)
     # rdkit_conformers=Conformers('rdkitconformers_origin_molecule.sdf','sdf')
     # # ob_conformers=Conformers('obconformers_origin_molecule.sdf','sdf')
-    # crest_conformers=Conformers('crest_conformers.xyz')
+    crest_conformers=Conformers('crest_conformers.xyz')
     # conformers_list=[rdkit_conformers, ob_conformers, crest_conformers]
 #     data=tab_data.TabDataAnalyzer(parser=tab_data.set_tab_parser(),origin_df=crest_conformers.coordinates_df_list[1],xyz_filename='conformer',get_plot=True)
 #     # overlay_analyzer=tab_data.OverlayAnalyzer(parser=tab_data.set_overlay_parser(),xyz_filenames=['0','1'] ,xyz_dfs=[crest_conformers.coordinates_df_list[0], crest_conformers.coordinates_df_list[1],crest_conformers.coordinates_df_list[2]], fit_mode='all',)
