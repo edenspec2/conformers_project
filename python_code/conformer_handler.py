@@ -138,33 +138,23 @@ class GeneralConstants(Enum):
     }
 
  
-def obmol_to_3d(obmol,output_name):
-    pbmol = pybel.Molecule(obmol)
-    pbmol.addh()
+
+
+def pbmol_from_coordinates(file_name,output_type='mol2'):
+    file_type=file_name.split('.')[-1]
+    pbmol=pybel.readfile(file_type, file_name)
+    return pbmol
+
+def split_molecule_file(file_name): ##for crest output
+    file_type=file_name.split('.')[-1]
+    molecules=[pbmol.write(file_type) for pbmol in pybel.readfile(file_type,file_name)]
+    return molecules
+
+def smiles_to_coordinates(smile,output_name):
+    pbmol=pybel.readstring('smi', smile)
     pbmol.make3D(forcefield="gaff",steps=100)
-    pbmol.localopt()
-    pbmol.write('pdb',help_functions.change_filetype(output_name,'pdb'),overwrite=True)
-    return 
-
-def obmol_from_coordinates(file_name,output_type='mol2'):
-    obConversion = ob.OBConversion()
-    file_type=file_name.split('.')[-1]
-    obConversion.SetInAndOutFormats(file_type, output_type)
-    obmol = ob.OBMol()
-    obConversion.ReadFile(obmol, file_name)
-    return obmol
-
-def create_3d_from_smiles(smiles_code,out_put_name): #'O=S(=O)(c3ccc(n1nc(cc1c2ccc(cc2)C)C(F)(F)F)cc3)N'
-    obmol = ob.OBMol()
-    conv = ob.OBConversion()
-    conv.SetInFormat('smi')
-    conv.ReadString(obmol, smiles_code)
-    return obmol_to_3d(obmol,out_put_name)
-
-def create_3d_from_file(file_name):
-    file_type=file_name.split('.')[-1]
-    obmol = obmol_from_coordinates(file_type,file_name)
-    return obmol_to_3d(obmol,help_functions.change_filetype(file_name,'pdb'))
+    pbmol.localopt()    
+    return pbmol.write('pdb')
 
 def freeze_atoms_for_confab(obmol,atoms_to_freeze):
     constraints = ob.OBFFConstraints()
@@ -278,23 +268,12 @@ def filter_unique(mols, crit=0.3):
             unique_mols.append(mol_i)
     return unique_mols
  
-def get_molecule_string(obmol,output_type='mol2'):
-    obconversion = ob.OBConversion()
-    obconversion.SetOutFormat(output_type)
-    return obconversion.WriteString(obmol)
 
-def split_molecule_file(file_name): ##for crest output
-    file_type=file_name.split('.')[-1]
-    molecules=[pbmol.write(file_type) for pbmol in pybel.readfile(file_type,file_name)]
-    return molecules
+
+
 
         #mol.write("sdf", "%s.sdf" % mol.title) to create file
         
-def molecules_file_to_3d(file_name): ##from a file containing many molecules
-    file_type=file_name.split('.')[-1]
-    for pbmol in pybel.readstring(file_type,file_name):
-        obmol=pbmol.OBMol
-        obmol_to_3d(obmol,"%s.pdb" % pbmol.title)
 
 def pbmol_to_mol2_df(pbmol):
     pbmol.write('mol2','temp.mol2')
@@ -310,31 +289,6 @@ def get_pbmol_bonds_df(pbmol) :
     bonds_array=np.array(bonds.split()).reshape(-1,4)
     bonds_df=pd.DataFrame(bonds_array[:,1:3])
     return bonds_df.astype(int)
-
-
-def mol_string_list_to_3d(mol_format,mol_string_list):
-    """
-    Parameters
-    ----------
-    mol_format : str
-        type of molecule input -mol2 xyz smi ...
-    mol_string_list : list 
-        a list of molecule strings as recived from confab_search.
-
-    Returns
-    -------
-    create 3d file stractures
-
-    """
-    obconversion = ob.OBConversion()
-    obconversion.SetInFormat(mol_format)
-    counter=0
-    for mol in mol_string_list:
-        counter+=1
-        obmol = ob.OBMol()
-        obconversion.ReadString(obmol, mol)
-        obmol_to_3d(obmol,"%s.pdb" % counter )
-
 
 
 def get_rmsd_df(pbmol_list):
