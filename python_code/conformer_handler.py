@@ -184,13 +184,13 @@ def confab_search(obmol,set_constraints=False,atoms_to_freeze=None,output_format
         output_strings.append(obconversion.WriteString(obmol))
     return output_strings
 
-def calc_energy(obmol):
-    pff = ob.OBForceField_FindType( "mmff94" )
-    # pff.SetLogLevel(ob.OBFF_LOGLVL_HIGH)
-    pff.SetLogToStdErr()
-    pff.Setup(obmol)
-    # pff.SetLogLevel(ob.OBFF_LOGLVL_NONE)
-    return pff.Energy()
+# def calc_energy(obmol):
+#     pff = ob.OBForceField_FindType( "mmff94" )
+#     # pff.SetLogLevel(ob.OBFF_LOGLVL_HIGH)
+#     pff.SetLogToStdErr()
+#     pff.Setup(obmol)
+#     # pff.SetLogLevel(ob.OBFF_LOGLVL_NONE)
+#     return pff.Energy()
 
 def calc_dipole_charges(coordinates_array,charges_array,sub_atoms=None):##added option for subunits
     """
