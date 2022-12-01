@@ -150,11 +150,15 @@ def split_molecule_file(file_name): ##for crest output
     molecules=[pbmol.write(file_type) for pbmol in pybel.readfile(file_type,file_name)]
     return molecules
 
-def smiles_to_coordinates(smile,output_name):
+def smile_to_coordinates(smile):
     pbmol=pybel.readstring('smi', smile)
     pbmol.make3D(forcefield="gaff",steps=100)
     pbmol.localopt()    
     return pbmol.write('pdb')
+
+def smiles_to_coordinates(smiles):
+    return [smile_to_coordinates(smile) for smile in smiles]
+
 
 def freeze_atoms_for_confab(obmol,atoms_to_freeze):
     constraints = ob.OBFFConstraints()
@@ -229,14 +233,6 @@ def get_obmol_charge(obmol):
     ob_charge_model.ComputeCharges(obmol)
     return ob_charge_model.GetPartialCharges()
 
-# def get_molecule_dipole(mol):
-#     ob_charge_model = ob.OBChargeModel.FindType("eem2015bn")
-#     return ob_charge_model.GetDipoleMoment(mol) ##cant open vector3 object
-
-# def get_molecule_angle_data(mol):
-#     ob_angle_data=ob.OBAngleData()
-#     return ob_angle_data.GetData(mol)
-
 
 
 
@@ -271,10 +267,6 @@ def filter_unique(mols, crit=0.3):
 
 
 
-
-        #mol.write("sdf", "%s.sdf" % mol.title) to create file
-        
-
 def pbmol_to_mol2_df(pbmol):
     pbmol.write('mol2','temp.mol2')
     pmol = PandasMol2()
@@ -292,7 +284,6 @@ def get_pbmol_bonds_df(pbmol) :
 
 
 def get_rmsd_df(pbmol_list):
-    #Remove similar structures
     rmsd_df = pd.DataFrame()
     aligner = pybel.ob.OBAlign()
     for index,pbmol_i in enumerate(pbmol_list):
@@ -344,35 +335,7 @@ def check_bonds(pbmol):
     return True
 
     
-# def unique_conformers(files, crit=0.5): #need editing
-#     """Removing conformers whose RMSD is within crit
-    
-#     Arguments:
-#         files: sdf files
-#     """
-#     unique_files = []
-#     duplicate_files = []
-#     aligner = pybel.ob.OBAlign()
-#     for file in files:
-#         mol = next(pybel.readfile("sdf", file))
-#         aligner.SetRefMol(mol.OBMol)
-#         unique = True
-#         for f in unique_files:
-#             mol_j = next(pybel.readfile("sdf", f))
-#             aligner.SetTargetMol(mol_j.OBMol)
-#             aligner.Align()
-#             rmsd = aligner.GetRMSD()
-#             if rmsd < crit:
-#                 unique = False
-#                 break
-#         if unique:
-#             unique_files.append(file)
-#         else:
-#             duplicate_files.append(file)
-#     c = len(unique_files) + len(duplicate_files)
-#     assert(c == len(files))
-#     for file in duplicate_files:
-#         os.remove(file)
+
     
 def get_sterimol(coordinates_df,bonds_df,atype,base_atoms,radii='bondi'):
     coordinates_array=np.array(coordinates_df[['x','y','z']].astype(float))
@@ -401,6 +364,11 @@ def get_sterimol(coordinates_df,bonds_df,atype,base_atoms,radii='bondi'):
     df=pd.DataFrame([B1,B5,L],index=['B1','B5','L']) 
     return df.T
   
+"""
+
+"""
+from pyscf import gto, scf
+mol = gto.M(atom="ethene.xyz")
 
 # class ConformerCompare():
     
