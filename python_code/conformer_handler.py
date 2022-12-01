@@ -191,7 +191,7 @@ def confab_search(obmol,set_constraints=False,atoms_to_freeze=None,output_format
 #     pff.Setup(obmol)
 #     # pff.SetLogLevel(ob.OBFF_LOGLVL_NONE)
 #     return pff.Energy()
-
+#####
 def calc_dipole_charges(coordinates_array,charges_array,sub_atoms=None):##added option for subunits
     """
     a function that recives coordinates and npa charges, transform the coordinates
