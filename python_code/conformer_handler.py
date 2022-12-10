@@ -184,13 +184,13 @@ def confab_search(obmol,set_constraints=False,atoms_to_freeze=None,output_format
         output_strings.append(obconversion.WriteString(obmol))
     return output_strings
 
-# def calc_energy(obmol):
-#     pff = ob.OBForceField_FindType( "mmff94" )
-#     # pff.SetLogLevel(ob.OBFF_LOGLVL_HIGH)
-#     pff.SetLogToStdErr()
-#     pff.Setup(obmol)
-#     # pff.SetLogLevel(ob.OBFF_LOGLVL_NONE)
-#     return pff.Energy()
+def calc_energy(obmol):
+    pff = ob.OBForceField_FindType( "mmff94" )
+    # pff.SetLogLevel(ob.OBFF_LOGLVL_HIGH)
+    pff.SetLogToStdErr()
+    pff.Setup(obmol)
+    # pff.SetLogLevel(ob.OBFF_LOGLVL_NONE)
+    return pff.Energy()
 #####
 def calc_dipole_charges(coordinates_array,charges_array,sub_atoms=None):##added option for subunits
     """
@@ -405,8 +405,8 @@ class Conformers():
         self.conformers_dict=self.array_list_to_dict()
         self.dipole_list=pd.concat([calc_dipole_charges(coordinates,charges) for coordinates,charges in zip(self.coordinates_array_list,self.charges_list)]).reset_index(drop=True)
         self.sterimol_list=pd.concat([get_sterimol(coordinates_df,bonds_df,atype,[2,1]) for coordinates_df,bonds_df,atype in zip(self.coordinates_df_list, self.conformers_bonds_df_list,self.atype_list)]).reset_index(drop=True)
-       # self.conformers_energy_list=pd.DataFrame([calc_energy(obmol) for obmol in self.obmol_list],columns=['energy'])
-        self.extended_conformers=pd.concat([pd.DataFrame(self.conformers_list,columns=['conformer']),self.dipole_list,self.sterimol_list],axis=1) #,self.conformers_energy_list
+        self.conformers_energy_list=pd.DataFrame([calc_energy(obmol) for obmol in self.obmol_list],columns=['energy'])
+        self.extended_conformers=pd.concat([pd.DataFrame(self.conformers_list,columns=['conformer']),self.dipole_list,self.conformers_energy_list,self.sterimol_list],axis=1) #,self.conformers_energy_list
         
     def write_all_conformers(self):
         for index,conformer in enumerate(self.conformers_list):
@@ -446,9 +446,16 @@ class Conformers():
             dicts['conformer_num_{}'.format(idx)]={'conformer_coordinates':array}
             
         return dicts
-
+    
+    def pbmol_to_3d(pbmol,out_put_name):
+        pbmol.write('pdb',out_put_name,overwrite=True)
+        return 
+    
+    def get_parameter_index(self,parameter,index_num,ascending=True):
+        ordered_df=self.extended_conformers.sort_values(parameter,axis=0,ascending=ascending).head(index_num)
+        return ordered_df.index.values.tolist()
+    
         
-        os.chdir('../')
      
 if __name__ == '__main__':
             
