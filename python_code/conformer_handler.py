@@ -368,6 +368,9 @@ def pbmol_to_3d(pbmol,out_put_name):
     pbmol.write('pdb',out_put_name,overwrite=True)
     return 
 
+def pbmols_to_3d(pbmol_list,engine_type='crest'):
+    [pbmol_to_3d(pbmol,'{}_conformer_{}.pdb'.format(engine_type,idx)) for idx,pbmol in enumerate(pbmol_list)]
+    
 # """
 
 # """
