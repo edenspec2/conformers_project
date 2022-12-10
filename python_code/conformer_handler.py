@@ -363,7 +363,11 @@ def get_sterimol(coordinates_df,bonds_df,atype,base_atoms,radii='bondi'):
     #     loc_B5=min(extended_df['y'].iloc[np.where(extended_df['Bs'].values==B5)])
     df=pd.DataFrame([B1,B5,L],index=['B1','B5','L']) 
     return df.T
-  
+
+def pbmol_to_3d(pbmol,out_put_name):
+    pbmol.write('pdb',out_put_name,overwrite=True)
+    return 
+
 # """
 
 # """
@@ -447,9 +451,7 @@ class Conformers():
             
         return dicts
     
-    def pbmol_to_3d(pbmol,out_put_name):
-        pbmol.write('pdb',out_put_name,overwrite=True)
-        return 
+    
     
     def get_parameter_index(self,parameter,index_num,ascending=True):
         ordered_df=self.extended_conformers.sort_values(parameter,axis=0,ascending=ascending).head(index_num)
