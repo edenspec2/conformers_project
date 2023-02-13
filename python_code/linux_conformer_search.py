@@ -1,12 +1,5 @@
 # -*- coding: utf-8 -*-
 """
-Created on Wed Nov 30 12:38:38 2022
-
-@author: edens
-"""
-
-# -*- coding: utf-8 -*-
-"""
 Created on Tue Oct 25 14:45:24 2022
 
 @author: edens
@@ -90,28 +83,27 @@ def rdkit_conformers_search(file_name, forcefield='UFF',add_ref=True):
     # rdkit_conformer_write(mol,results)
     os.remove(os.path.abspath((file_name.split('.')[0]+'.sdf')))
     return 
-
-def freeze_atoms_for_confab(obmol,atoms_to_freeze):
-    constraints = ob.OBFFConstraints()
-    for atom in ob.OBMolAtomIter(obmol):
-        atom_id = atom.GetIndex() 
-        if atom_id in atoms_to_freeze:
-            constraints.AddAtomConstraint(atom_id)
-    return constraints
-
-def confab_search(obmol,output_format='xyz'):
-    pff = ob.OBForceField_FindType( "mmff94" )
-    pff.DiverseConfGen(0.5, 1000, 50.0, True) #allow change
-    pff.Setup(obmol)
-    pff.GetConformers(obmol)
-    obconversion = ob.OBConversion()
-    obconversion.SetOutFormat(output_format)
-    output_strings = []
-    for conf_num in range(obmol.NumConformers()):
-        obmol.SetConformer(conf_num)
-        output_strings.append(obconversion.WriteString(obmol))
-    return output_strings
-
-
+    
 if __name__ == '__main__':
-    pass
+    xyz_files=[filename for filename in os.listdir() if 'xyz' in filename]
+    os.chdir(r'/gpfs0/gaus/users/edenspec/crest_runs/test')
+    for xyz_file in xyz_files:
+        molecule_name=xyz_file.split('.')[0]
+        
+        
+        xyz_filename=xyz_file
+        os.system('/gpfs0/gaus/users/edenspec/working_obabel/build/bin/obabel {} -O {} --conformer --nconf 30--writeconformers'.format(*xyz_file,('obconformers_'+xyz_file)))
+        os.system('/gpfs0/gaus/projects/crest --input {} -gfn2 -g h2o -T 4 --xnam /gpfs0/gaus/projects/xtb-6.4.1/bin/xtb'.format(xyz_file))
+        rdkit_conformers_search(xyz_filename)
+        # os.mkdir(path)
+        # os.chdir(path)
+        # os.system('cp '+Constant.HOME_DIR.value+'/fixed_locations.inp '+Constant.HOME_DIR.value+'/'+molecule_name+'/fixed_locations.inp')
+        # os.system('cp '+Constant.HOME_DIR.value+'/'+smile_filename+' '+Constant.HOME_DIR.value+'/'+molecule_name+'/'+smile_filename)
+        # os.system(CrestConstants.OBABEL.value+smile_filename+CrestConstants.OBABEL_XYZ_SETTINGS_1.value+xyz_filename+CrestConstants.OBABEL_XYZ_SETTINGS_2.value)
+        # os.system('echo >> '+xyz_filename)
+        # os.system('echo >> '+xyz_filename)
+        # os.system('echo "\$write" >> '+xyz_filename)
+        # os.system('echo "   output file=properties.out" >> '+xyz_filename)
+        # os.chdir(Constant.HOME_DIR.value)
+        # os.system(CrestConstants.REMOVEL_COMMAND.value+smile_filename)
+        # xyz_filenames.append(xyz_filename)

@@ -35,8 +35,8 @@ sys.path.insert(0, path_to_add)
 from tools.general_constants import *
 from tools.file_handlers import *
 from tools.rmsd_wrappers import *
-import pybel
-import openbabel as ob
+from openbabel import pybel
+from openbabel import openbabel as ob
 ############
 #Constansts#
 ############

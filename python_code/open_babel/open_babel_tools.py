@@ -39,7 +39,7 @@ def create_3d_from_smiles(smiles_code,out_put_name):
     conv = ob.OBConversion()
     conv.SetInFormat('smi')
     conv.ReadString(mol, smiles_code)
-    return molecule_to_3d(mol,out_put_name)
+    return pbmol_to_3d(mol,out_put_name)
 
 def create_3d_from_xyz(xyz_file_name,out_put_name):
     mol = molecule_from_coordinates('xyz',xyz_file_name)
@@ -66,3 +66,12 @@ def get_molecule_dipole(mol):
     ob_charge_model = ob.OBChargeModel.FindType("eem2015bn")
     return ob_charge_model.GetDipoleMoment(mol) ##cant open vector3 object
 
+def smile_to_coordinates(smile):
+    pbmol = pybel.readstring('smi', smile)
+    pbmol.make3D(forcefield="gaff", steps=100)
+    pbmol.localopt()
+    return pbmol.write('pdb')
+
+
+def smiles_to_coordinates(smiles):
+    return [smile_to_coordinates(smile) for smile in smiles]
